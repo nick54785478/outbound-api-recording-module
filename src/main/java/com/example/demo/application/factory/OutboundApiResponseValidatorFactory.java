@@ -28,10 +28,8 @@ public class OutboundApiResponseValidatorFactory {
 	 */
 	public OutboundApiResponseValidatorFactory(List<OutboundApiResponseValidatorPort> validators) {
 		this.validatorMap = validators.stream().collect(Collectors
-				.toMap(OutboundApiResponseValidatorPort::supportSystem, v -> v, (existing, replacement) -> existing)); // 註.
-																														// 若重複
-																														// key
-																														// 保留第一個
+				.toMap(OutboundApiResponseValidatorPort::supportSystem, v -> v, (existing, replacement) -> existing));
+		// 註. 若重複 key 保留第一個
 	}
 
 	/**

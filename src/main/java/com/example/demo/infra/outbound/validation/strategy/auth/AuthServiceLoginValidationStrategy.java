@@ -91,7 +91,6 @@ public class AuthServiceLoginValidationStrategy implements ApiResponseValidation
 		// JWT Token 或 Refresh Token 取得失敗
 		if (response instanceof JwTokenGettenData tokenData
 				&& (tokenData.getToken() == null || tokenData.getRefreshToken() == null)) {
-
 			throw new CustomFeignException("FEIGN_FAILED", "AuthService token 取得失敗");
 		}
 	}
