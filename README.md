@@ -54,11 +54,11 @@
 當標註有 @ExternalApiClient 的方法被呼叫時，會依序執行以下步驟：
 
 
-**1. 解析階段：**解析 Request 並先行存入 OutboundApiRecord 紀錄表中 。
+**1. 解析階段：** 解析 Request 並先行存入 OutboundApiRecord 紀錄表中 。
 
-**2. 執行階段：**執行原有的 API 呼叫方法（Proceed）。
+**2. 執行階段：** 執行原有的 API 呼叫方法（Proceed）。
 
-**3. 驗證階段：**呼叫 Validator 與 Strategy 進行回應檢核 。
+**3. 驗證階段：** 呼叫 Validator 與 Strategy 進行回應檢核 。
 
 **4. 完成階段：**
 
