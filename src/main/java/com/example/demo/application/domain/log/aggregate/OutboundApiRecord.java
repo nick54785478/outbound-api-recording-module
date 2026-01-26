@@ -1,8 +1,8 @@
 package com.example.demo.application.domain.log.aggregate;
 
 import com.example.demo.application.domain.log.aggregate.vo.OutboundApiStatus;
-import com.example.demo.application.domain.log.command.OutboundApiFailedCommand;
-import com.example.demo.application.domain.log.command.OutboundApiSucceededCommand;
+import com.example.demo.application.domain.log.command.RecordFailedOutboundApiCommand;
+import com.example.demo.application.domain.log.command.RecordSuccessOutboundApiCommand;
 import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
 import com.example.demo.infra.outbound.resolver.OutboundApiRequestResolver;
 
@@ -140,9 +140,9 @@ public class OutboundApiRecord {
 	 * 將紀錄狀態轉為 FAILED，並補齊錯誤與回應資訊。
 	 * </p>
 	 *
-	 * @param command {@link OutboundApiFailedCommand}
+	 * @param command {@link RecordFailedOutboundApiCommand}
 	 */
-	public void markFailed(OutboundApiFailedCommand command) {
+	public void markFailed(RecordFailedOutboundApiCommand command) {
 		this.status = OutboundApiStatus.FAILED;
 		this.responseBody = command.getResponseBody();
 		this.errorMessage = command.getErrorMessage();
@@ -157,9 +157,9 @@ public class OutboundApiRecord {
 	 * 將紀錄狀態轉為 SUCCESS，並補齊回應資訊。
 	 * </p>
 	 *
-	 * @param command {@link OutboundApiSucceededCommand}
+	 * @param command {@link RecordSuccessOutboundApiCommand}
 	 */
-	public void markSuccess(OutboundApiSucceededCommand command) {
+	public void markSuccess(RecordSuccessOutboundApiCommand command) {
 		this.status = OutboundApiStatus.SUCCESS;
 		this.responseBody = command.getResponseBody();
 		this.apiPath = command.getApiPath();

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutboundApiFailedCommand {
+public class RecordFailedOutboundApiCommand {
 
 	/**
 	 * 對應的 Outbound API 呼叫紀錄 ID。

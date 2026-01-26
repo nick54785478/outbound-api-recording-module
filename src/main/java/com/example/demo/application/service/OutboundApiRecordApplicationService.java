@@ -1,17 +1,21 @@
 package com.example.demo.application.service;
 
+import java.util.UUID;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.application.domain.log.aggregate.OutboundApiRecord;
-import com.example.demo.application.domain.log.command.OutboundApiFailedCommand;
-import com.example.demo.application.domain.log.command.OutboundApiSucceededCommand;
+import com.example.demo.application.domain.log.event.RecordOutboundApiFailedEvent;
+import com.example.demo.application.domain.log.event.RecordOutboundApiFailedEvent.RecordOutboundApiFailedEventData;
+import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent;
+import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent.RecordOutboundApiEventData;
 import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
 import com.example.demo.application.factory.OutboundApiRequestHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
+import com.example.demo.application.port.EventPublisherPort;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
-import com.example.demo.application.port.OutboundApiResponseHandlerPort;
 import com.example.demo.application.port.OutboundApiResponseValidatorPort;
 import com.example.demo.config.context.ContextHolder;
 import com.example.demo.config.context.element.OutboundApiRequestInfo;
@@ -60,6 +64,8 @@ public class OutboundApiRecordApplicationService {
 	 */
 	private final OutboundApiResponseHandlerFactory outboundApiResponseHandlerFactory;
 
+	private final EventPublisherPort eventPublisher;
+
 	/**
 	 * 外部 API 呼叫前處理
 	 *
@@ -86,10 +92,28 @@ public class OutboundApiRecordApplicationService {
 	}
 
 	/**
-	 * 外部 API 呼叫後處理
+	 * 外部 API 呼叫後處理（EDA 版本）
 	 *
 	 * <p>
-	 * 包含回應驗證與成功處理。 - 驗證 Response 是否符合規範，必要時拋出例外 - 成功呼叫則更新 Outbound API 紀錄
+	 * 此方法負責在外部 API 成功呼叫後：
+	 * <ul>
+	 * <li>驗證回應內容是否符合系統規範</li>
+	 * <li>將成功結果封裝為 Domain Event 並發送</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p>
+	 * 本方法<strong>不直接處理成功後的資料更新或副作用</strong>， 而是透過 Event Driven Architecture（EDA），
+	 * 將後續行為交由對應的 Event Listener 負責。
+	 * </p>
+	 *
+	 * <p>
+	 * 常見的 Listener 責任包含：
+	 * <ul>
+	 * <li>更新 OutboundApiRecord 狀態</li>
+	 * <li>寫入稽核或操作紀錄</li>
+	 * <li>非同步通知或後續流程觸發</li>
+	 * </ul>
 	 * </p>
 	 *
 	 * @param system  外部系統代碼
@@ -97,28 +121,47 @@ public class OutboundApiRecordApplicationService {
 	 * @param saved   對應的 OutboundApiRecord
 	 */
 	public void afterExecutingOutboundApi(String system, Object proceed, OutboundApiRecord saved) {
+
+		// 取得當前請求的外部 API 呼叫上下文（URL、HTTP Method 等）
 		OutboundApiRequestInfo feignContext = ContextHolder.getFeignContext();
 
-		// 呼叫 Validator，直接傳入物件，不需序列化
+		// 回應驗證（可能拋出例外以中斷主流程）
+		// Validator 僅負責規則檢查，不處理任何 side effect
 		OutboundApiResponseValidatorPort validator = validatorFactory.get(system);
 		validator.validate(proceed, feignContext);
 
-		// 成功處理：更新紀錄
-		OutboundApiSucceededCommand outboundApiSucceededCommand = OutboundApiSucceededCommand.builder()
-				.savedId(saved.getId()).apiPath(feignContext.getUrl()).httpMethod(feignContext.getHttpMethod())
-				.responseBody(JsonParseUtil.serialize(proceed)).build();
+		// 建立「外部 API 成功」事件
+		RecordOutboundApiSucceededEvent event = RecordOutboundApiSucceededEvent.builder().system(system)
+				.eventLogUuid(UUID.randomUUID().toString()) // 事件唯一識別
+				.targetId(UUID.randomUUID().toString()) // 事件目標識別（供追蹤使用）
+				.data(RecordOutboundApiEventData.builder().savedId(saved.getId()).apiPath(feignContext.getUrl())
+						.httpMethod(feignContext.getHttpMethod()).responseBody(JsonParseUtil.serialize(proceed))
+						.build())
+				.build();
 
-		// 取得 Response Handler
-		OutboundApiResponseHandlerPort responseHandler = outboundApiResponseHandlerFactory.getHandler(system);
-		responseHandler.handleSuccess(outboundApiSucceededCommand);
+		// 發送 Domain Event，由 Listener 處理後續流程
+		eventPublisher.publish(event);
 	}
 
 	/**
-	 * 外部 API 呼叫例外處理
+	 * 外部 API 呼叫例外處理（EDA 版本）
 	 *
 	 * <p>
-	 * 將例外訊息轉換成 OutboundApiFailedCommand 並交給 Response Handler 處理。 通常在 AOP 的 catch
-	 * 區塊呼叫。
+	 * 當外部 API 呼叫或後處理流程發生例外時， 將錯誤資訊封裝為失敗事件並發送。
+	 * </p>
+	 *
+	 * <p>
+	 * 本方法不負責例外的最終處理結果（例如 DB 更新或補償行為）， 僅負責將錯誤狀態轉換為 Domain Event， 由對應的 Listener
+	 * 決定後續行為。
+	 * </p>
+	 *
+	 * <p>
+	 * 常見的 Listener 行為包含：
+	 * <ul>
+	 * <li>標記 OutboundApiRecord 為失敗</li>
+	 * <li>紀錄錯誤 Log 或告警</li>
+	 * <li>觸發補償或重試流程</li>
+	 * </ul>
 	 * </p>
 	 *
 	 * @param system           外部系統代碼
@@ -126,13 +169,20 @@ public class OutboundApiRecordApplicationService {
 	 * @param exceptionMessage 發生的例外訊息
 	 */
 	public void handleException(String system, OutboundApiRecord saved, String exceptionMessage) {
+
+		// 取得當前請求的外部 API 呼叫上下文
 		OutboundApiRequestInfo feignContext = ContextHolder.getFeignContext();
 
-		OutboundApiFailedCommand outboundApiFailedCommand = OutboundApiFailedCommand.builder().savedId(saved.getId())
-				.apiPath(feignContext.getUrl()).httpMethod(feignContext.getHttpMethod()).errorMessage(exceptionMessage)
+		// 建立「外部 API 失敗」事件
+		RecordOutboundApiFailedEvent event = RecordOutboundApiFailedEvent.builder().system(system)
+				.eventLogUuid(UUID.randomUUID().toString()) // 事件唯一識別
+				.targetId(UUID.randomUUID().toString())
+				.data(RecordOutboundApiFailedEventData.builder().savedId(saved.getId()).apiPath(feignContext.getUrl())
+						.httpMethod(feignContext.getHttpMethod()).errorMessage(exceptionMessage).build())
 				.build();
 
-		OutboundApiResponseHandlerPort responseHandler = outboundApiResponseHandlerFactory.getHandler(system);
-		responseHandler.handleFailure(outboundApiFailedCommand);
+		// 發送失敗事件，由 Listener 負責實際錯誤處理
+		eventPublisher.publish(event);
 	}
+
 }

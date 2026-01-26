@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutboundApiSucceededCommand {
+public class RecordSuccessOutboundApiCommand {
 
 	/**
 	 * 對應的 Outbound API 呼叫紀錄 ID。

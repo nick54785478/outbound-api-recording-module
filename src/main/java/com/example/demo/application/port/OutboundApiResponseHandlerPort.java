@@ -1,7 +1,7 @@
 package com.example.demo.application.port;
 
-import com.example.demo.application.domain.log.command.OutboundApiFailedCommand;
-import com.example.demo.application.domain.log.command.OutboundApiSucceededCommand;
+import com.example.demo.application.domain.log.command.RecordFailedOutboundApiCommand;
+import com.example.demo.application.domain.log.command.RecordSuccessOutboundApiCommand;
 
 /**
  * Outbound API Response Handler Port
@@ -44,7 +44,7 @@ public interface OutboundApiResponseHandlerPort {
 	 * 處理外部 API 呼叫「成功完成」後的回應結果。
 	 *
 	 * <p>
-	 * 此方法接收的 {@link OutboundApiSucceededCommand} 為「已整理完成」的成功結果快照，通常包含：
+	 * 此方法接收的 {@link RecordSuccessOutboundApiCommand} 為「已整理完成」的成功結果快照，通常包含：
 	 * <ul>
 	 * <li>原始呼叫紀錄的識別 ID（savedId）</li>
 	 * <li>實際呼叫的 API Path 與 HTTP Method</li>
@@ -63,13 +63,13 @@ public interface OutboundApiResponseHandlerPort {
 	 *
 	 * @param command 成功回應結果的封裝 Command
 	 */
-	void handleSuccess(OutboundApiSucceededCommand command);
+	void handleSuccess(RecordSuccessOutboundApiCommand command);
 
 	/**
 	 * 處理外部 API 呼叫「失敗完成」後的結果。
 	 *
 	 * <p>
-	 * 此方法接收的 {@link OutboundApiFailedCommand} 為失敗結果的統一封裝，已將例外或錯誤資訊轉換為 可持久化與記錄的資料格式。
+	 * 此方法接收的 {@link RecordFailedOutboundApiCommand} 為失敗結果的統一封裝，已將例外或錯誤資訊轉換為 可持久化與記錄的資料格式。
 	 * </p>
 	 *
 	 * <p>
@@ -83,6 +83,6 @@ public interface OutboundApiResponseHandlerPort {
 	 *
 	 * @param command 失敗結果的封裝 Command
 	 */
-	void handleFailure(OutboundApiFailedCommand command);
+	void handleFailure(RecordFailedOutboundApiCommand command);
 
 }
