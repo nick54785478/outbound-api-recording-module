@@ -1,4 +1,4 @@
-package com.example.demo.config.exception.handler;
+package com.example.demo.iface.exception;
 
 import org.modelmapper.ValidationException;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.example.demo.config.exception.response.BaseExceptionResponse;
+import com.example.demo.infra.exception.response.BaseExceptionResponse;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
 import com.example.demo.util.BaseDataTransformer;
 

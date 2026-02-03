@@ -1,4 +1,4 @@
-package com.example.demo.config.exception.exception;
+package com.example.demo.infra.exception.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

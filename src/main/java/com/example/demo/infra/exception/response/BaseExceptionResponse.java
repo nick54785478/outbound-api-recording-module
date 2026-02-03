@@ -1,4 +1,4 @@
-package com.example.demo.config.exception.response;
+package com.example.demo.infra.exception.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
