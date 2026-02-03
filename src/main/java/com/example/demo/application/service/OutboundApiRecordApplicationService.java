@@ -12,7 +12,6 @@ import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededE
 import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent.RecordOutboundApiEventData;
 import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
 import com.example.demo.application.factory.OutboundApiRequestHandlerFactory;
-import com.example.demo.application.factory.OutboundApiResponseHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
 import com.example.demo.application.port.EventPublisherPort;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
@@ -60,10 +59,8 @@ public class OutboundApiRecordApplicationService {
 	private final OutboundApiResponseValidatorFactory validatorFactory;
 
 	/**
-	 * Response Handler 工廠，，用於取得 Response Handler ，來處理成功/失敗回應
+	 * Event Publisher
 	 */
-	private final OutboundApiResponseHandlerFactory outboundApiResponseHandlerFactory;
-
 	private final EventPublisherPort eventPublisher;
 
 	/**

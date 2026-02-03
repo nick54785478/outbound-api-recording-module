@@ -3,7 +3,7 @@ package com.example.demo.application.port;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
-import com.example.demo.config.annotation.ExternalApiClient;
+import com.example.demo.infra.annotation.ExternalApiClient;
 
 /**
  * Outbound API Request Handler Port

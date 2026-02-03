@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.application.domain.log.aggregate.OutboundApiRecord;
 import com.example.demo.application.service.OutboundApiRecordApplicationService;
-import com.example.demo.config.annotation.ExternalApiClient;
 import com.example.demo.config.context.ContextHolder;
+import com.example.demo.infra.annotation.ExternalApiClient;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -10,7 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
-import com.example.demo.config.annotation.ExternalApiClient;
+import com.example.demo.infra.annotation.ExternalApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;

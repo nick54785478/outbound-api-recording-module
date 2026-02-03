@@ -6,7 +6,7 @@ import com.example.demo.application.port.AuthSerivceClientPort;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
 import com.example.demo.application.shared.outbound.auth.dto.JwTokenGettenData;
 import com.example.demo.application.shared.outbound.auth.dto.PermissionGettenData;
-import com.example.demo.config.annotation.ExternalApiClient;
+import com.example.demo.infra.annotation.ExternalApiClient;
 import com.example.demo.infra.outbound.feign.client.AuthFeignClient;
 
 import lombok.AllArgsConstructor;

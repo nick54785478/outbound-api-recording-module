@@ -1,4 +1,4 @@
-package com.example.demo.config.annotation;
+package com.example.demo.infra.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
