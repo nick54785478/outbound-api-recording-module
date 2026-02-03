@@ -1,6 +1,6 @@
-package com.example.demo.config.context;
+package com.example.demo.infra.context;
 
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

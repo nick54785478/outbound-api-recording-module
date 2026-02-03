@@ -2,7 +2,7 @@ package com.example.demo.infra.outbound.exception.adapter;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.exception.mapper.ExternalExceptionMapper;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
 

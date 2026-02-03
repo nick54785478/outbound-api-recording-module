@@ -1,6 +1,6 @@
 package com.example.demo.application.port;
 
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 
 /**
  * 外部 API 回應檢核器 Port

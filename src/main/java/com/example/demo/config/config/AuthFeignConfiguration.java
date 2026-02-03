@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.example.demo.config.context.ContextHolder;
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.ContextHolder;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.shared.constant.JwtConstants;
 
 import feign.Client;

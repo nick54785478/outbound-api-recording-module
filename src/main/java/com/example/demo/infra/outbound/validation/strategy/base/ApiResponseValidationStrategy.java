@@ -1,6 +1,6 @@
 package com.example.demo.infra.outbound.validation.strategy.base;
 
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 
 /**
  * 外部 API 回應驗證策略（API 級別）

@@ -3,7 +3,7 @@ package com.example.demo.infra.outbound.validation.strategy.auth;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.application.shared.outbound.auth.dto.JwTokenGettenData;
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
 import com.example.demo.infra.outbound.validation.strategy.base.ApiResponseValidationStrategy;
 

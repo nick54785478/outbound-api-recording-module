@@ -16,8 +16,8 @@ import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
 import com.example.demo.application.port.EventPublisherPort;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
 import com.example.demo.application.port.OutboundApiResponseValidatorPort;
-import com.example.demo.config.context.ContextHolder;
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.ContextHolder;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.infra.persistence.OutboundApiRecordRepository;
 import com.example.demo.util.JsonParseUtil;
 

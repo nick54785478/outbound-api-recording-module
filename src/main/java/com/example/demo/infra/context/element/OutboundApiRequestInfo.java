@@ -1,4 +1,4 @@
-package com.example.demo.config.context.element;
+package com.example.demo.infra.context.element;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.example.demo.infra.outbound.exception.mapper;
 
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.exception.factory.ExternalExceptionMapperFactory;
 
 /**

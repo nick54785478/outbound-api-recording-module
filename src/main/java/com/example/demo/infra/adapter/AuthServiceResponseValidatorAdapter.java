@@ -3,7 +3,7 @@ package com.example.demo.infra.adapter;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.application.port.OutboundApiResponseValidatorPort;
-import com.example.demo.config.context.element.OutboundApiRequestInfo;
+import com.example.demo.infra.context.element.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.validation.factory.ApiResponseValidationStrategyFactory;
 
 import lombok.RequiredArgsConstructor;
