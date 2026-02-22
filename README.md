@@ -75,7 +75,7 @@
      * 註. 此設計可避免 Validator 內部充斥 if-else，並可依 API 精細定義成功條件。
 
 
-** 5. Application Service（OutboundApiRecordApplicationService）**
+**5. Application Service（OutboundApiRecordApplicationService）**
   * **角色定位：**
      * 統籌 Outbound API 呼叫前後的應用層流程。
   * **責任：**
@@ -85,7 +85,7 @@
   * **注意**
      * 不包含 AOP 與 Event Listener 技術細節。
 
-** 6. Event-Driven Architecture（EDA）**
+**6. Event-Driven Architecture（EDA**
 
   * **成功 / 失敗結果：**
      * 轉換為 Domain Event 發佈。
