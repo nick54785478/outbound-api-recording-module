@@ -85,7 +85,7 @@
   * **注意**
      * 不包含 AOP 與 Event Listener 技術細節。
 
-**6. Event-Driven Architecture（EDA**
+**6. Event-Driven Architecture（EDA)**
 
   * **成功 / 失敗結果：**
      * 轉換為 Domain Event 發佈。
