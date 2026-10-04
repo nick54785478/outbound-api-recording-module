@@ -2,8 +2,8 @@ package com.example.demo.infra.outbound.validation.strategy.auth;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.outbound.auth.dto.JwTokenGettenData;
-import com.example.demo.infra.context.element.OutboundApiRequestInfo;
+import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
+import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
 import com.example.demo.infra.outbound.validation.strategy.base.ApiResponseValidationStrategy;
 
@@ -70,7 +70,7 @@ public class AuthServiceLoginValidationStrategy implements ApiResponseValidation
 	 * <p>
 	 * 驗證規則：
 	 * <ul>
-	 * <li>回傳物件必須為 {@link JwTokenGettenData}</li>
+	 * <li>回傳物件必須為 {@link JwTokenGottenData}</li>
 	 * <li>token 與 refreshToken 皆不可為 {@code null}</li>
 	 * </ul>
 	 * </p>
@@ -89,8 +89,8 @@ public class AuthServiceLoginValidationStrategy implements ApiResponseValidation
 		log.info("執行 {} 驗證策略，路徑為: {}", system(), api());
 
 		// JWT Token 或 Refresh Token 取得失敗
-		if (response instanceof JwTokenGettenData tokenData
-				&& (tokenData.getToken() == null || tokenData.getRefreshToken() == null)) {
+		if (response instanceof JwTokenGottenData tokenData
+				&& (tokenData.getToken() == null)) {
 			throw new CustomFeignException("FEIGN_FAILED", "AuthService token 取得失敗");
 		}
 	}

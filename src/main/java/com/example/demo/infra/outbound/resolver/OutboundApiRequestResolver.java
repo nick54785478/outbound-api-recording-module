@@ -5,21 +5,19 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
 import com.example.demo.infra.annotation.ExternalApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.RequiredArgsConstructor;
+
 
 /**
  * Outbound API Request Resolver
  *
  * <p>
- * 專責將 AOP 攔截到的 {@link ProceedingJoinPoint}， 解析並轉換為
+ * 專責將攔截到的方法呼叫， 解析並轉換為
  * {@link RecordOutboundApiRequestCommand} 中 「Request 相關資訊」的組裝器（Assembler /
  * Resolver）。
  * </p>
@@ -48,7 +46,6 @@ import lombok.RequiredArgsConstructor;
  * </ul>
  */
 @Component
-@RequiredArgsConstructor
 public class OutboundApiRequestResolver {
 
 	/**
@@ -65,21 +62,21 @@ public class OutboundApiRequestResolver {
 	private static final int MAX_LOG_LENGTH = 3000;
 
 	/**
-	 * 將 AOP 攔截到的 {@link ProceedingJoinPoint} 解析為
+	 * 將攔截到的方法呼叫解析為
 	 * {@link RecordOutboundApiRequestCommand}（僅限 Request 資訊）。
 	 *
 	 * <p>
 	 * 本方法僅關心「呼叫前可得資訊」， 回應結果需由其他元件補齊後續狀態。
 	 * </p>
 	 *
-	 * @param joinPoint AOP 切入點，包含方法、目標物件與實際參數
+	 * @param target 目標物件
+	 * @param method 目標方法
+	 * @param args 方法參數
 	 * @return 已填充 Request 資訊的 {@link RecordOutboundApiRequestCommand}
 	 */
-	public RecordOutboundApiRequestCommand resolveRequest(ProceedingJoinPoint joinPoint) {
+	public RecordOutboundApiRequestCommand resolveRequest(Object target, Method method, Object[] args) {
 
-		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		Method method = signature.getMethod();
-		Class<?> targetClass = joinPoint.getTarget().getClass();
+		Class<?> targetClass = target.getClass();
 
 		// 取得外部系統名稱（若未標註則回傳 UNKNOWN）
 		ExternalApiClient clientAnn = targetClass.getAnnotation(ExternalApiClient.class);
@@ -88,7 +85,7 @@ public class OutboundApiRequestResolver {
 		// 使用 Java 方法名稱作為 API Method 識別
 		String apiMethod = method.getName();
 
-		Object[] args = joinPoint.getArgs();
+		// 使用 Java 方法名稱作為 API Method 識別
 
 		// 將全部參數序列化為 RequestBody（供稽核與除錯）
 		String requestBody = serializeRequestBody(args);
@@ -99,8 +96,15 @@ public class OutboundApiRequestResolver {
 		// 抽取基本型別作為 PathVariables（Fallback）
 		String pathVariables = extractPathVariables(args);
 
-		return RecordOutboundApiRequestCommand.builder().system(system).method(apiMethod).requestBody(requestBody)
-				.requestParams(requestParams).pathVariables(pathVariables).build();
+		return new RecordOutboundApiRequestCommand(
+				system,
+				apiMethod,
+				null, // httpMethod
+				null, // apiPath
+				requestBody,
+				requestParams,
+				pathVariables
+		);
 	}
 
 	// ------------------------------------------------------------------------

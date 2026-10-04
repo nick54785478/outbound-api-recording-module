@@ -2,7 +2,7 @@ package com.example.demo.infra.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.application.domain.log.aggregate.OutboundApiRecord;
+import com.example.demo.infra.persistence.entity.OutboundApiRecord;
 
 public interface OutboundApiRecordRepository extends JpaRepository<OutboundApiRecord, Long> {
 

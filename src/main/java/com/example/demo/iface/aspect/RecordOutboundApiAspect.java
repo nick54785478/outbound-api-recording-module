@@ -1,28 +1,35 @@
 package com.example.demo.iface.aspect;
 
+import com.example.demo.application.shared.outbound.context.ContextHolder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.domain.log.aggregate.OutboundApiRecord;
+import com.example.demo.infra.persistence.entity.OutboundApiRecord;
 import com.example.demo.application.service.OutboundApiRecordApplicationService;
 import com.example.demo.infra.annotation.ExternalApiClient;
-import com.example.demo.infra.context.ContextHolder;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Aspect
 @Component
-@RequiredArgsConstructor
 public class RecordOutboundApiAspect {
 
 	private final OutboundApiRecordApplicationService applicationService;
 
-	@Pointcut("@within(com.example.demo.config.annotation.ExternalApiClient)")
+	public RecordOutboundApiAspect(OutboundApiRecordApplicationService applicationService) {
+		this.applicationService = applicationService;
+	}
+
+
+	@Pointcut("@within(com.example.demo.infra.annotation.ExternalApiClient)")
 	public void pointCut() {
 	}
 
@@ -35,11 +42,14 @@ public class RecordOutboundApiAspect {
 		String system = externalApiClient.system();
 
 		Object[] args = joinPoint.getArgs();
-		String methodName = joinPoint.getSignature().getName();
+		org.aspectj.lang.reflect.MethodSignature signature = (org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature();
+		java.lang.reflect.Method method = signature.getMethod();
+		Object target = joinPoint.getTarget();
+		String methodName = method.getName();
 		log.info("[RecordOutboundApiAspect] system: {}, Method: {}, Args: {}", system, methodName, args);
 
 		// 外部 API 呼叫前處理
-		OutboundApiRecord saved = applicationService.preExecutingOutboundApi(system, joinPoint);
+		OutboundApiRecord saved = applicationService.preExecutingOutboundApi(system, target, method, args);
 
 		try {
 			// 執行原方法

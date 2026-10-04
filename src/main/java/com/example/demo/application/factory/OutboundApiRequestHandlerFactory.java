@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
 
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
 
@@ -13,14 +12,14 @@ import com.example.demo.application.port.OutboundApiRequestHandlerPort;
  * Outbound API Request Handler Factory
  *
  * <p>
- * 此 Factory 負責依「外部系統代碼（system）」選擇 對應的 {@link OutboundApiRequestHandler} 實作，
+ * 此 Factory 負責依「外部系統代碼（system）」選擇 對應的 {@link OutboundApiRequestHandlerPort} 實作，
  * 用於解析並建立外部 API 呼叫的 Request 紀錄。
  * </p>
  *
  * <h3>設計說明</h3>
  * <ul>
  * <li>採用 Strategy Pattern，依 system 進行行為切換</li>
- * <li>所有 Handler 皆由 Spring 管理並自動註冊</li>
+ * <li>由 Infrastructure 層 (如 @Configuration) 負責注入實作，保持 Application 層純淨</li>
  * <li>Factory 僅負責選擇，不包含任何解析邏輯</li>
  * </ul>
  *
@@ -36,7 +35,6 @@ import com.example.demo.application.port.OutboundApiRequestHandlerPort;
  * <li>會直接拋出 {@link IllegalStateException}</li>
  * </ul>
  */
-@Component
 public class OutboundApiRequestHandlerFactory {
 
 	/**
@@ -48,8 +46,8 @@ public class OutboundApiRequestHandlerFactory {
 	 * 建立 Request Handler Registry。
 	 *
 	 * <p>
-	 * Spring 會注入所有 {@link OutboundApiRequestHandler} 的實作， 並依其
-	 * {@link OutboundApiRequestHandler#supportSystem()} 建立索引。
+	 * 透過建構子注入所有 {@link OutboundApiRequestHandlerPort} 的實作， 並依其
+	 * {@link OutboundApiRequestHandlerPort#supportSystem()} 建立索引。
 	 * </p>
 	 *
 	 * @param handlers 所有已註冊的 Request Handler
@@ -61,7 +59,7 @@ public class OutboundApiRequestHandlerFactory {
 	}
 
 	/**
-	 * 依外部系統代碼取得對應的 {@link OutboundApiRequestHandler}。
+	 * 依外部系統代碼取得對應的 {@link OutboundApiRequestHandlerPort}。
 	 *
 	 * @param system 外部系統代碼（如 ERP / CRM / PAYMENT）
 	 * @return 對應的 Request Handler

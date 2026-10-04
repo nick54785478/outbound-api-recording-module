@@ -1,5 +1,4 @@
-package com.example.demo.infra
-.annotation;
+package com.example.demo.infra.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,7 +23,7 @@ import com.example.demo.infra.outbound.resolver.OutboundApiRequestResolver;
  * <ul>
  * <li>必須標註在「Client 實作類」上，而非介面</li>
  * <li>標註的 {@code system} 必須唯一，對應於 Handler Factory 的
- * {@link OutboundApiRequestHandler} / {@link OutboundApiResponseHandler}</li>
+ * {@link com.example.demo.application.port.OutboundApiRequestHandlerPort} / {@link com.example.demo.application.port.OutboundApiResponseHandlerPort}</li>
  * <li>此 Annotation 僅在 Runtime 可見，用於 AOP 或策略選擇</li>
  * </ul>
  * </p>

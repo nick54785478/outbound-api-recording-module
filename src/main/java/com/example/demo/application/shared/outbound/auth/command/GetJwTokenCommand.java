@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetJwTokenCommand {
 
+	private String tenant;
+
 	private String username;
 
 	private String password;

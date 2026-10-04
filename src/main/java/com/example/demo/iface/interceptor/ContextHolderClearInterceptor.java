@@ -1,11 +1,12 @@
 package com.example.demo.iface.interceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.example.demo.infra.context.ContextHolder;
+import com.example.demo.application.shared.outbound.context.ContextHolder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,10 +31,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * 階段執行清除邏輯，確保不論 Request 正常結束或發生 Exception， Context 都能被正確釋放。
  * </p>
  */
+@Slf4j
 @Component
 public class ContextHolderClearInterceptor implements HandlerInterceptor {
-
-	private static final Logger log = LoggerFactory.getLogger(ContextHolderClearInterceptor.class);
 
 	/**
 	 * Request 前置處理。

@@ -1,15 +1,12 @@
 package com.example.demo.application.port;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-
-import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
-import com.example.demo.infra.annotation.ExternalApiClient;
+import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
 
 /**
  * Outbound API Request Handler Port
  *
  * <p>
- * 此 Port 定義「外部 API 呼叫請求階段」的解析與轉換行為， 專責將 AOP 攔截到的 {@link ProceedingJoinPoint}，
+ * 此 Port 定義「外部 API 呼叫請求階段」的解析與轉換行為， 專責將 AOP 攔截到的 ProceedingJoinPoint
  * 轉換為可被儲存或後續處理的 {@link RecordOutboundApiRequestCommand}。
  * </p>
  *
@@ -33,7 +30,7 @@ public interface OutboundApiRequestHandlerPort {
 	 * 回傳此 Handler 所支援的外部系統代碼。
 	 *
 	 * <p>
-	 * 系統代碼通常對應 {@link ExternalApiClient#system()}， 用於在執行期選擇正確的 Request Handler 實作。
+	 * 系統代碼通常對應外部 API 客戶端的識別， 用於在執行期選擇正確的 Request Handler 實作。
 	 * </p>
 	 *
 	 * <p>
@@ -65,9 +62,11 @@ public interface OutboundApiRequestHandlerPort {
 	 * </ul>
 	 * </p>
 	 *
-	 * @param joinPoint AOP 方法切入點，包含目標物件、方法與實際參數
+	 * @param target 攔截到的目標物件
+	 * @param method 攔截到的目標方法
+	 * @param args 方法參數
 	 * @return 已填充 Request 資訊的 {@link RecordOutboundApiRequestCommand}
 	 */
-	RecordOutboundApiRequestCommand resolveRequest(ProceedingJoinPoint joinPoint);
+	RecordOutboundApiRequestCommand resolveRequest(Object target, java.lang.reflect.Method method, Object[] args);
 
 }

@@ -2,24 +2,25 @@ package com.example.demo.application.service;
 
 import java.util.UUID;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.domain.log.aggregate.OutboundApiRecord;
-import com.example.demo.application.domain.log.event.RecordOutboundApiFailedEvent;
-import com.example.demo.application.domain.log.event.RecordOutboundApiFailedEvent.RecordOutboundApiFailedEventData;
-import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent;
-import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent.RecordOutboundApiEventData;
-import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
+import com.example.demo.infra.persistence.entity.OutboundApiRecord;
+import com.example.demo.application.shared.event.RecordOutboundApiFailedEvent;
+import com.example.demo.application.shared.event.RecordOutboundApiFailedEvent.RecordOutboundApiFailedEventData;
+import com.example.demo.application.shared.event.RecordOutboundApiSucceededEvent;
+import com.example.demo.application.shared.event.RecordOutboundApiSucceededEvent.RecordOutboundApiEventData;
+import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
 import com.example.demo.application.factory.OutboundApiRequestHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
 import com.example.demo.application.port.EventPublisherPort;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
 import com.example.demo.application.port.OutboundApiResponseValidatorPort;
-import com.example.demo.infra.context.ContextHolder;
-import com.example.demo.infra.context.element.OutboundApiRequestInfo;
+import com.example.demo.application.shared.outbound.context.ContextHolder;
+import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 import com.example.demo.infra.persistence.OutboundApiRecordRepository;
-import com.example.demo.util.JsonParseUtil;
+import com.example.demo.infra.util.JsonParseUtil;
+import lombok.AllArgsConstructor;
 
 import lombok.AllArgsConstructor;
 
@@ -40,7 +41,6 @@ import lombok.AllArgsConstructor;
  * </p>
  */
 @Service
-@AllArgsConstructor
 public class OutboundApiRecordApplicationService {
 
 	/**
@@ -63,6 +63,17 @@ public class OutboundApiRecordApplicationService {
 	 */
 	private final EventPublisherPort eventPublisher;
 
+	public OutboundApiRecordApplicationService(
+			OutboundApiRequestHandlerFactory outboundApiRequestHandlerFactory,
+			OutboundApiRecordRepository outboundApiRecordRepository,
+			OutboundApiResponseValidatorFactory validatorFactory,
+			EventPublisherPort eventPublisher) {
+		this.outboundApiRequestHandlerFactory = outboundApiRequestHandlerFactory;
+		this.outboundApiRecordRepository = outboundApiRecordRepository;
+		this.validatorFactory = validatorFactory;
+		this.eventPublisher = eventPublisher;
+	}
+
 	/**
 	 * 外部 API 呼叫前處理
 	 *
@@ -71,16 +82,17 @@ public class OutboundApiRecordApplicationService {
 	 * </p>
 	 *
 	 * @param system    外部系統代碼，對應
-	 *                  {@link OutboundApiRequestHandlerPort#supportSystem()}
-	 * @param joinPoint AOP 切入點，包含方法參數與目標方法
+	 * @param target    目標物件
+	 * @param method    目標方法
+	 * @param args      方法參數
 	 * @return 儲存後的 {@link OutboundApiRecord} 實體
 	 */
-	public OutboundApiRecord preExecutingOutboundApi(String system, ProceedingJoinPoint joinPoint) {
+	public OutboundApiRecord preExecutingOutboundApi(String system, Object target, java.lang.reflect.Method method, Object[] args) {
 		// 取得 Request Handler
 		OutboundApiRequestHandlerPort requestHandler = outboundApiRequestHandlerFactory.getHandler(system);
 
 		// 將方法參數轉換為 Request Command
-		RecordOutboundApiRequestCommand command = requestHandler.resolveRequest(joinPoint);
+		RecordOutboundApiRequestCommand command = requestHandler.resolveRequest(target, method, args);
 
 		// 建立 OutboundApiRecord 並儲存
 		OutboundApiRecord outboundApiRecord = new OutboundApiRecord();
@@ -128,13 +140,17 @@ public class OutboundApiRecordApplicationService {
 		validator.validate(proceed, feignContext);
 
 		// 建立「外部 API 成功」事件
-		RecordOutboundApiSucceededEvent event = RecordOutboundApiSucceededEvent.builder().system(system)
-				.eventLogUuid(UUID.randomUUID().toString()) // 事件唯一識別
-				.targetId(UUID.randomUUID().toString()) // 事件目標識別（供追蹤使用）
-				.data(RecordOutboundApiEventData.builder().savedId(saved.getId()).apiPath(feignContext.getUrl())
-						.httpMethod(feignContext.getHttpMethod()).responseBody(JsonParseUtil.serialize(proceed))
-						.build())
-				.build();
+		RecordOutboundApiSucceededEvent event = new RecordOutboundApiSucceededEvent(
+				UUID.randomUUID().toString(), // eventLogUuid
+				UUID.randomUUID().toString(), // targetId
+				system,
+				new RecordOutboundApiEventData(
+						saved.getId(),
+						feignContext.getUrl(),
+						feignContext.getHttpMethod(),
+						JsonParseUtil.serialize(proceed)
+				)
+		);
 
 		// 發送 Domain Event，由 Listener 處理後續流程
 		eventPublisher.publish(event);
@@ -171,12 +187,18 @@ public class OutboundApiRecordApplicationService {
 		OutboundApiRequestInfo feignContext = ContextHolder.getFeignContext();
 
 		// 建立「外部 API 失敗」事件
-		RecordOutboundApiFailedEvent event = RecordOutboundApiFailedEvent.builder().system(system)
-				.eventLogUuid(UUID.randomUUID().toString()) // 事件唯一識別
-				.targetId(UUID.randomUUID().toString())
-				.data(RecordOutboundApiFailedEventData.builder().savedId(saved.getId()).apiPath(feignContext.getUrl())
-						.httpMethod(feignContext.getHttpMethod()).errorMessage(exceptionMessage).build())
-				.build();
+		RecordOutboundApiFailedEvent event = new RecordOutboundApiFailedEvent(
+				UUID.randomUUID().toString(), // eventLogUuid
+				UUID.randomUUID().toString(), // targetId
+				system,
+				new RecordOutboundApiFailedEventData(
+						saved.getId(),
+						feignContext.getUrl(),
+						exceptionMessage,
+						null, // responseBody
+						feignContext.getHttpMethod()
+				)
+		);
 
 		// 發送失敗事件，由 Listener 負責實際錯誤處理
 		eventPublisher.publish(event);

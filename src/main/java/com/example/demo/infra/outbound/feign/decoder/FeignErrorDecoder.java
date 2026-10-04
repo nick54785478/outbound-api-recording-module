@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
-import com.example.demo.infra.context.ContextHolder;
-import com.example.demo.infra.context.element.OutboundApiRequestInfo;
+import com.example.demo.application.shared.outbound.context.ContextHolder;
+
+import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
 
 import feign.Response;

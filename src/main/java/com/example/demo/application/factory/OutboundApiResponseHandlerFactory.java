@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
 
 import com.example.demo.application.port.OutboundApiResponseHandlerPort;
 
@@ -13,13 +12,13 @@ import com.example.demo.application.port.OutboundApiResponseHandlerPort;
  * Outbound API Response Handler Factory
  *
  * <p>
- * 此 Factory 負責依「外部系統代碼（system）」選擇 對應的 {@link OutboundApiResponseHandler} 實作。
+ * 此 Factory 負責依「外部系統代碼（system）」選擇 對應的 {@link OutboundApiResponseHandlerPort} 實作。
  * </p>
  *
  * <h3>設計說明</h3>
  * <ul>
- * <li>透過 Spring 注入所有 {@link OutboundApiResponseHandler} 實作</li>
- * <li>以 {@link OutboundApiResponseHandler#supportSystem()} 作為唯一鍵</li>
+ * <li>由 Infrastructure 層負責傳入所有 {@link OutboundApiResponseHandlerPort} 實作</li>
+ * <li>以 {@link OutboundApiResponseHandlerPort#supportSystem()} 作為唯一鍵</li>
  * <li>在執行期動態選擇正確的 Response Handler</li>
  * </ul>
  *
@@ -35,7 +34,6 @@ import com.example.demo.application.port.OutboundApiResponseHandlerPort;
  * <li>代表系統設定或實作不完整，屬於「不可恢復」的系統錯誤</li>
  * </ul>
  */
-@Component
 public class OutboundApiResponseHandlerFactory {
 
 	/**
@@ -47,8 +45,8 @@ public class OutboundApiResponseHandlerFactory {
 	 * 建立 Response Handler Registry。
 	 *
 	 * <p>
-	 * Spring 會自動注入所有 {@link OutboundApiResponseHandler} 的實作， 並依其
-	 * {@link OutboundApiResponseHandler#supportSystem()} 建立索引。
+	 * 透過建構子傳入所有 {@link OutboundApiResponseHandlerPort} 的實作， 並依其
+	 * {@link OutboundApiResponseHandlerPort#supportSystem()} 建立索引。
 	 * </p>
 	 *
 	 * @param handlers 所有已註冊的 Response Handler
@@ -60,7 +58,7 @@ public class OutboundApiResponseHandlerFactory {
 	}
 
 	/**
-	 * 依外部系統代碼取得對應的 {@link OutboundApiResponseHandler}。
+	 * 依外部系統代碼取得對應的 {@link OutboundApiResponseHandlerPort}。
 	 *
 	 * @param system 外部系統代碼（如 ERP / CRM / PAYMENT）
 	 * @return 對應的 Response Handler

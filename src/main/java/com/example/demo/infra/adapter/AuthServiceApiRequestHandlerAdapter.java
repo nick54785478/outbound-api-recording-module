@@ -1,9 +1,8 @@
 package com.example.demo.infra.adapter;
 
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.domain.log.outbound.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
 import com.example.demo.infra.outbound.resolver.OutboundApiRequestResolver;
 
@@ -21,8 +20,8 @@ class AuthServiceApiRequestHandlerAdapter implements OutboundApiRequestHandlerPo
 	}
 
 	@Override
-	public RecordOutboundApiRequestCommand resolveRequest(ProceedingJoinPoint joinPoint) {
-		return resolver.resolveRequest(joinPoint);
+	public RecordOutboundApiRequestCommand resolveRequest(Object target, java.lang.reflect.Method method, Object[] args) {
+		return resolver.resolveRequest(target, method, args);
 	}
 
 }

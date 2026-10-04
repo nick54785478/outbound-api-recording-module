@@ -1,7 +1,7 @@
 package com.example.demo.application.port;
 
-import com.example.demo.application.domain.log.command.RecordFailedOutboundApiCommand;
-import com.example.demo.application.domain.log.command.RecordSuccessOutboundApiCommand;
+import com.example.demo.application.shared.command.log.RecordFailedOutboundApiCommand;
+import com.example.demo.application.shared.command.log.RecordSuccessOutboundApiCommand;
 
 /**
  * Outbound API Response Handler Port

@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.application.port.AuthSerivceClientPort;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.dto.JwTokenGettenData;
-import com.example.demo.application.shared.outbound.auth.dto.PermissionGettenData;
+import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
+import com.example.demo.application.shared.outbound.auth.dto.PermissionGottenData;
 
 import lombok.AllArgsConstructor;
 
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthApplicationService {
 
-	private AuthSerivceClientPort authSerivceClient;
+	private AuthSerivceClientPort authServiceClient;
 
 	/**
 	 * 向 Auth Service 取得 JWToken
@@ -21,8 +21,8 @@ public class AuthApplicationService {
 	 * @param command GetJwTokenCommand
 	 * @return Token 資料
 	 */
-	public JwTokenGettenData getJwToken(GetJwTokenCommand command) {
-		return authSerivceClient.getJwToken(command);
+	public JwTokenGottenData getJwToken(GetJwTokenCommand command) {
+		return authServiceClient.getJwToken(command);
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class AuthApplicationService {
 	 * @param username 使用者帳號
 	 * @return Permission 清單
 	 */
-	public PermissionGettenData getPermissionList(String username) {
-		return authSerivceClient.getPermissionList(username);
+	public PermissionGottenData getPermissionList(String username) {
+		return authServiceClient.getPermissionList(username);
 	}
 }

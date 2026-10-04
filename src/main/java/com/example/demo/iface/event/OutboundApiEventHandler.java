@@ -1,19 +1,20 @@
 package com.example.demo.iface.event;
 
+import com.example.demo.infra.util.BaseDataTransformer;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.domain.log.command.RecordFailedOutboundApiCommand;
-import com.example.demo.application.domain.log.command.RecordSuccessOutboundApiCommand;
-import com.example.demo.application.domain.log.event.RecordOutboundApiFailedEvent;
-import com.example.demo.application.domain.log.event.RecordOutboundApiSucceededEvent;
+import com.example.demo.application.shared.command.log.RecordFailedOutboundApiCommand;
+import com.example.demo.application.shared.command.log.RecordSuccessOutboundApiCommand;
+import com.example.demo.application.shared.event.RecordOutboundApiFailedEvent;
+import com.example.demo.application.shared.event.RecordOutboundApiSucceededEvent;
 import com.example.demo.application.factory.OutboundApiResponseHandlerFactory;
 import com.example.demo.application.port.OutboundApiResponseHandlerPort;
-import com.example.demo.util.BaseDataTransformer;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+
 
 /**
  * Outbound API Domain Event Handler
@@ -37,15 +38,19 @@ import lombok.extern.slf4j.Slf4j;
  * </ul>
  * </p>
  */
+
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class OutboundApiEventHandler {
 
 	/**
 	 * 外部 API 回應處理器工廠， 依外部系統代碼(system)取得對應的 ResponseHandler 實作。
 	 */
 	private final OutboundApiResponseHandlerFactory responseHandlerFactory;
+
+	public OutboundApiEventHandler(OutboundApiResponseHandlerFactory responseHandlerFactory) {
+		this.responseHandlerFactory = responseHandlerFactory;
+	}
 
 	/**
 	 * 處理外部 API 呼叫「成功完成」事件

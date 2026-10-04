@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.dto.JwTokenGettenData;
-import com.example.demo.application.shared.outbound.auth.dto.PermissionGettenData;
-import com.example.demo.config.config.AuthFeignConfiguration;
+import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
+import com.example.demo.application.shared.outbound.auth.dto.PermissionGottenData;
+import com.example.demo.config.AuthFeignConfiguration;
 
 @FeignClient(value = "AuthFeignClient", url = "${auth.service.endpoint}", configuration = AuthFeignConfiguration.class)
 public interface AuthFeignClient {
@@ -21,7 +21,7 @@ public interface AuthFeignClient {
 	 * @return JwToken
 	 */
 	@PostMapping(value = "/api/v1/login")
-	public JwTokenGettenData getJwToken(@RequestBody GetJwTokenCommand command);
+	public JwTokenGottenData getJwToken(@RequestBody GetJwTokenCommand command);
 
 	/**
 	 * 取得個人權限
@@ -29,6 +29,6 @@ public interface AuthFeignClient {
 	 * @param username 使用者帳號
 	 */
 	@GetMapping(value = "/api/v1/auth/permissions")
-	public PermissionGettenData getPermissionList(@RequestParam String username);
+	public PermissionGottenData getPermissionList(@RequestParam String username);
 
 }
