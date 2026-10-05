@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.infra.persistence.entity.OutboundApiRecord;
+
 import com.example.demo.application.service.OutboundApiRecordApplicationService;
 import com.example.demo.infra.annotation.ExternalApiClient;
 import lombok.RequiredArgsConstructor;
@@ -49,19 +49,19 @@ public class RecordOutboundApiAspect {
 		log.info("[RecordOutboundApiAspect] system: {}, Method: {}, Args: {}", system, methodName, args);
 
 		// 外部 API 呼叫前處理
-		OutboundApiRecord saved = applicationService.preExecutingOutboundApi(system, target, method, args);
+		Long recordId = applicationService.preExecutingOutboundApi(system, target, method, args);
 
 		try {
 			// 執行原方法
 			Object proceed = joinPoint.proceed();
 
 			// 外部 API 呼叫後處理
-			applicationService.afterExecutingOutboundApi(system, proceed, saved);
+			applicationService.afterExecutingOutboundApi(system, proceed, recordId);
 			return proceed;
 
 		} catch (Exception e) {
 			// 外部 API 呼叫例外處理
-			applicationService.handleException(system, saved, e.getMessage());
+			applicationService.handleException(system, recordId, e.getMessage());
 			throw e; // 可以拋出去終止流程，也可不拋
 
 		} finally {

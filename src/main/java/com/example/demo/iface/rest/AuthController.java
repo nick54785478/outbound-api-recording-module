@@ -10,31 +10,37 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.AuthApplicationService;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
-import com.example.demo.application.shared.outbound.auth.dto.PermissionGottenData;
+import com.example.demo.application.shared.dto.JwTokenGottenResult;
+import com.example.demo.application.shared.dto.PermissionGottenResult;
 import com.example.demo.iface.dto.req.GetJwTokenResource;
-import com.example.demo.iface.dto.res.JwTokenGettenResource;
-import com.example.demo.iface.dto.res.PermissionGettenResource;
+import com.example.demo.iface.dto.res.JwTokenGottenResource;
+import com.example.demo.iface.dto.res.PermissionGottenResource;
 import com.example.demo.infra.util.BaseDataTransformer;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Auth API", description = "測試外部 AuthService 認證與授權相關 API")
 public class AuthController {
 
 	private AuthApplicationService applicationService;
 
+	@Operation(summary = "取得 JWT Token", description = "透過帳號密碼登入取得 Token")
 	@PostMapping("/login")
-	public ResponseEntity<JwTokenGettenResource> getJwToken(@RequestBody GetJwTokenResource resource) {
+	public ResponseEntity<JwTokenGottenResource> getJwToken(@RequestBody GetJwTokenResource resource) {
 		GetJwTokenCommand command = BaseDataTransformer.transformData(resource, GetJwTokenCommand.class);
-		JwTokenGottenData data = applicationService.getJwToken(command);
-		return new ResponseEntity<>(new JwTokenGettenResource("200", "Success", data), HttpStatus.OK);
+		JwTokenGottenResult data = applicationService.getJwToken(command);
+		return new ResponseEntity<>(new JwTokenGottenResource("200", "Success", data), HttpStatus.OK);
 	}
 
+	@Operation(summary = "取得使用者權限", description = "依據使用者名稱查詢權限清單")
 	@GetMapping("/permission")
-	public ResponseEntity<PermissionGettenResource> getJwToken(@RequestParam String username) {
-		PermissionGottenData data = applicationService.getPermissionList(username);
-		return new ResponseEntity<>(new PermissionGettenResource("200", "Success", data), HttpStatus.OK);
+	public ResponseEntity<PermissionGottenResource> getJwToken(@RequestParam String username) {
+		PermissionGottenResult data = applicationService.getPermissionList(username);
+		return new ResponseEntity<>(new PermissionGottenResource("200", "Success", data), HttpStatus.OK);
 	}
 }

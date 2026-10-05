@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.RecordOutboundApiRequestCommand;
 import com.example.demo.infra.annotation.ExternalApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

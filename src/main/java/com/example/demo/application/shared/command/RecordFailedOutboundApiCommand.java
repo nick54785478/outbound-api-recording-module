@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.command.log;
+package com.example.demo.application.shared.command;
 
 /**
  * 外部 API 呼叫失敗結果的封裝 Command。

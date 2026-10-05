@@ -2,11 +2,10 @@ package com.example.demo.infra.adapter;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.command.log.RecordFailedOutboundApiCommand;
-import com.example.demo.application.shared.command.log.RecordSuccessOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordFailedOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordSuccessOutboundApiCommand;
 import com.example.demo.application.port.OutboundApiResponseHandlerPort;
-import com.example.demo.infra.persistence.OutboundApiRecordRepository;
-import lombok.AllArgsConstructor;
+import com.example.demo.infra.persistence.repository.OutboundApiRecordRepository;
 
 @Component
 class AuthServiceApiResponseHandlerAdapter implements OutboundApiResponseHandlerPort {

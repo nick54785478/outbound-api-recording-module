@@ -1,6 +1,6 @@
 package com.example.demo.application.port;
 
-import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.RecordOutboundApiRequestCommand;
 
 /**
  * Outbound API Request Handler Port

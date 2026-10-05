@@ -5,13 +5,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.command.log.RecordFailedOutboundApiCommand;
-import com.example.demo.application.shared.command.log.RecordSuccessOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordFailedOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordSuccessOutboundApiCommand;
 import com.example.demo.application.shared.event.RecordOutboundApiFailedEvent;
 import com.example.demo.application.shared.event.RecordOutboundApiSucceededEvent;
 import com.example.demo.application.factory.OutboundApiResponseHandlerFactory;
 import com.example.demo.application.port.OutboundApiResponseHandlerPort;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 

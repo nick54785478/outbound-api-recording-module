@@ -6,6 +6,9 @@ import com.example.demo.application.port.AuthSerivceClientPort;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
 import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
 import com.example.demo.application.shared.outbound.auth.dto.PermissionGottenData;
+import com.example.demo.application.shared.dto.JwTokenGottenResult;
+import com.example.demo.application.shared.dto.PermissionGottenResult;
+import com.example.demo.infra.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 
@@ -21,8 +24,9 @@ public class AuthApplicationService {
 	 * @param command GetJwTokenCommand
 	 * @return Token 資料
 	 */
-	public JwTokenGottenData getJwToken(GetJwTokenCommand command) {
-		return authServiceClient.getJwToken(command);
+	public JwTokenGottenResult getJwToken(GetJwTokenCommand command) {
+		JwTokenGottenData data = authServiceClient.getJwToken(command);
+		return BaseDataTransformer.transformData(data, JwTokenGottenResult.class);
 	}
 
 	/**
@@ -31,7 +35,8 @@ public class AuthApplicationService {
 	 * @param username 使用者帳號
 	 * @return Permission 清單
 	 */
-	public PermissionGottenData getPermissionList(String username) {
-		return authServiceClient.getPermissionList(username);
+	public PermissionGottenResult getPermissionList(String username) {
+		PermissionGottenData data = authServiceClient.getPermissionList(username);
+		return BaseDataTransformer.transformData(data, PermissionGottenResult.class);
 	}
 }

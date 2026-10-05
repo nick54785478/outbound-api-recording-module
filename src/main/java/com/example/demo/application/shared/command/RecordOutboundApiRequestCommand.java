@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.command.log;
+package com.example.demo.application.shared.command;
 
 public class RecordOutboundApiRequestCommand {
 

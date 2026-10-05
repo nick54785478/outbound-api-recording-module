@@ -2,7 +2,7 @@ package com.example.demo.infra.adapter;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.RecordOutboundApiRequestCommand;
 import com.example.demo.application.port.OutboundApiRequestHandlerPort;
 import com.example.demo.infra.outbound.resolver.OutboundApiRequestResolver;
 

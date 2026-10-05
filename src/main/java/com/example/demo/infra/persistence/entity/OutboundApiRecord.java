@@ -1,9 +1,9 @@
 package com.example.demo.infra.persistence.entity;
 
 import com.example.demo.infra.persistence.entity.vo.OutboundApiStatus;
-import com.example.demo.application.shared.command.log.RecordFailedOutboundApiCommand;
-import com.example.demo.application.shared.command.log.RecordSuccessOutboundApiCommand;
-import com.example.demo.application.shared.command.log.RecordOutboundApiRequestCommand;
+import com.example.demo.application.shared.command.RecordFailedOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordSuccessOutboundApiCommand;
+import com.example.demo.application.shared.command.RecordOutboundApiRequestCommand;
 import com.example.demo.infra.outbound.resolver.OutboundApiRequestResolver;
 
 import jakarta.persistence.Column;
