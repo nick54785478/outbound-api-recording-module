@@ -24,7 +24,7 @@ class AuthServiceResponseValidatorAdapter implements OutboundApiResponseValidato
 
 	@Override
 	public void validate(Object response, OutboundApiRequestInfo context) {
-		String api = context.getApi(); // 例如: /api/v1/login 、 /api/v1/permissions
+		String api = context.api(); // 例如: /api/v1/login 、 /api/v1/permissions
 		strategyFactory.get(supportSystem(), api).ifPresent(strategy -> strategy.validate(response, context));
 	}
 }

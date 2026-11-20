@@ -44,6 +44,6 @@ class DefaultExternalExceptionMapper implements ExternalExceptionMapper {
 	 */
 	@Override
 	public RuntimeException map(int httpStatus, String responseBody, OutboundApiRequestInfo context) {
-		return new CustomFeignException("FEIGN_FAILED", "外部系統 " + context.getSystem() + " 呼叫失敗");
+		return new CustomFeignException("FEIGN_FAILED", "外部系統 " + context.system() + " 呼叫失敗");
 	}
 }

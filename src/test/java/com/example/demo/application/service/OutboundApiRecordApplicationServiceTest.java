@@ -60,10 +60,11 @@ class OutboundApiRecordApplicationServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		OutboundApiRequestInfo context = new OutboundApiRequestInfo();
-		context.setUrl("https://api.example.com/test");
-		context.setHttpMethod("POST");
-		context.setSystem("AuthService");
+		OutboundApiRequestInfo context = OutboundApiRequestInfo.builder()
+				.url("https://api.example.com/test")
+				.httpMethod("POST")
+				.system("AuthService")
+				.build();
 		ContextHolder.setFeignContext(context);
 	}
 
@@ -131,10 +132,10 @@ class OutboundApiRecordApplicationServiceTest {
 		verify(eventPublisher).publish(captor.capture());
 
 		OutboundApiSucceededEvent published = captor.getValue();
-		assertThat(published.getSystem()).isEqualTo("AuthService");
-		assertThat(published.getData().getSavedId()).isEqualTo(1001L);
-		assertThat(published.getData().getDurationMs()).isEqualTo(120L);
-		assertThat(published.getData().getResponseBody()).isEqualTo("{\"result\":\"ok\"}");
+		assertThat(published.system()).isEqualTo("AuthService");
+		assertThat(published.data().savedId()).isEqualTo(1001L);
+		assertThat(published.data().durationMs()).isEqualTo(120L);
+		assertThat(published.data().responseBody()).isEqualTo("{\"result\":\"ok\"}");
 	}
 
 	/**
@@ -161,9 +162,9 @@ class OutboundApiRecordApplicationServiceTest {
 		verify(eventPublisher).publish(captor.capture());
 
 		OutboundApiFailedEvent published = captor.getValue();
-		assertThat(published.getSystem()).isEqualTo("AuthService");
-		assertThat(published.getData().getSavedId()).isEqualTo(1002L);
-		assertThat(published.getData().getErrorMessage()).isEqualTo("Connection timed out");
-		assertThat(published.getData().getDurationMs()).isEqualTo(3000L);
+		assertThat(published.system()).isEqualTo("AuthService");
+		assertThat(published.data().savedId()).isEqualTo(1002L);
+		assertThat(published.data().errorMessage()).isEqualTo("Connection timed out");
+		assertThat(published.data().durationMs()).isEqualTo(3000L);
 	}
 }

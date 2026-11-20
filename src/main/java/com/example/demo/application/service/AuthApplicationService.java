@@ -10,7 +10,7 @@ import com.example.demo.application.shared.dto.PermissionGottenResult;
 import com.example.demo.application.shared.command.GetJwTokenCommand;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenFromAuthCommand;
 import com.example.demo.application.shared.outbound.auth.query.GetPermissionListFromAuthQuery;
-import com.example.demo.application.shared.outbound.auth.query.GetPermissionListQuery;
+import com.example.demo.application.shared.query.GetPermissionListQuery;
 
 import lombok.AllArgsConstructor;
 
@@ -43,7 +43,7 @@ public class AuthApplicationService implements GetJwTokenUseCase, GetPermissionL
 	@Override
 	public PermissionGottenResult getPermissionList(GetPermissionListQuery query) {
 		// 顯式轉換為向外部 AuthService 查詢權限的 Outbound Query
-		GetPermissionListFromAuthQuery outboundQuery = new GetPermissionListFromAuthQuery(query.getUsername());
+		GetPermissionListFromAuthQuery outboundQuery = new GetPermissionListFromAuthQuery(query.username());
 		return authServiceClient.getPermissionList(outboundQuery);
 	}
 }

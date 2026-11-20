@@ -86,11 +86,11 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
         // 2. 若 HTTP 狀態碼為 2xx，進一步委派給對應系統的 Validator 執行業務層級驗證 (例如業務錯誤碼檢查)
         try {
-            if (context != null && context.getSystem() != null) {
-                validatorFactory.get(context.getSystem()).validate(body, context);
+            if (context != null && context.system() != null) {
+                validatorFactory.get(context.system()).validate(body, context);
             }
         } catch (RuntimeException e) {
-            log.error("外部 API 回應業務檢核失敗: system={}, error={}", context != null ? context.getSystem() : "UNKNOWN", e.getMessage());
+            log.error("外部 API 回應業務檢核失敗: system={}, error={}", context != null ? context.system() : "UNKNOWN", e.getMessage());
             return e;
         }
 

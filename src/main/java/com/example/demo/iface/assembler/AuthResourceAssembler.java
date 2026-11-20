@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.application.shared.dto.JwTokenGottenResult;
 import com.example.demo.application.shared.dto.PermissionGottenResult;
 import com.example.demo.application.shared.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.query.GetPermissionListQuery;
+import com.example.demo.application.shared.query.GetPermissionListQuery;
 import com.example.demo.iface.resource.in.GetJwTokenResource;
 import com.example.demo.iface.resource.out.JwTokenGottenData;
 import com.example.demo.iface.resource.out.JwTokenGottenResource;
@@ -56,7 +56,7 @@ public class AuthResourceAssembler {
 		if (result == null) {
 			return new JwTokenGottenResource("200", "Success", null);
 		}
-		JwTokenGottenData data = new JwTokenGottenData(result.getToken());
+		JwTokenGottenData data = new JwTokenGottenData(result.token());
 		return new JwTokenGottenResource("200", "Success", data);
 	}
 
@@ -70,7 +70,7 @@ public class AuthResourceAssembler {
 		if (result == null) {
 			return new PermissionGottenResource("200", "Success", null);
 		}
-		PermissionGottenData data = new PermissionGottenData(result.getPermissionList());
+		PermissionGottenData data = new PermissionGottenData(result.permissionList());
 		return new PermissionGottenResource("200", "Success", data);
 	}
 }

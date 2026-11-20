@@ -36,7 +36,7 @@ class AuthServiceClientAdapter implements AuthServiceClientPort {
 
 	@Override
 	public PermissionGottenResult getPermissionList(GetPermissionListFromAuthQuery query) {
-		PermissionGottenFromAuthData data = client.getPermissionList(query.getUsername());
+		PermissionGottenFromAuthData data = client.getPermissionList(query.username());
 		return data != null ? new PermissionGottenResult(data.getPermissionList()) : null;
 	}
 

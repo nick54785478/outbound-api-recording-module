@@ -101,8 +101,8 @@ public class OutboundApiRecordApplicationService {
 				system,
 				new OutboundApiSucceededEventData(
 						recordId,
-						feignContext.getUrl(),
-						feignContext.getHttpMethod(),
+						feignContext.url(),
+						feignContext.httpMethod(),
 						jsonSerializer.serialize(proceed),
 						durationMs
 				)
@@ -139,10 +139,10 @@ public class OutboundApiRecordApplicationService {
 				system,
 				new OutboundApiFailedEventData(
 						recordId,
-						feignContext.getUrl(),
+						feignContext.url(),
 						exceptionMessage,
 						null,
-						feignContext.getHttpMethod(),
+						feignContext.httpMethod(),
 						durationMs
 				)
 		);

@@ -40,15 +40,15 @@ public class OutboundApiEventHandler {
 	@Async
 	@EventListener
 	public void onSucceeded(OutboundApiSucceededEvent event) {
-		String system = event.getSystem();
-		OutboundApiSucceededEventData data = event.getData();
+		String system = event.system();
+		OutboundApiSucceededEventData data = event.data();
 
 		RecordSuccessOutboundApiCommand command = new RecordSuccessOutboundApiCommand(
-				data.getSavedId(),
-				data.getApiPath(),
-				data.getHttpMethod(),
-				data.getResponseBody(),
-				data.getDurationMs()
+				data.savedId(),
+				data.apiPath(),
+				data.httpMethod(),
+				data.responseBody(),
+				data.durationMs()
 		);
 
 		OutboundApiResponseHandlerPort handler = responseHandlerFactory.getHandler(system);
@@ -63,16 +63,16 @@ public class OutboundApiEventHandler {
 	@Async
 	@EventListener
 	public void handleFailed(OutboundApiFailedEvent event) {
-		String system = event.getSystem();
-		OutboundApiFailedEventData data = event.getData();
+		String system = event.system();
+		OutboundApiFailedEventData data = event.data();
 
 		RecordFailedOutboundApiCommand command = new RecordFailedOutboundApiCommand(
-				data.getSavedId(),
-				data.getApiPath(),
-				data.getErrorMessage(),
-				data.getResponseBody(),
-				data.getHttpMethod(),
-				data.getDurationMs()
+				data.savedId(),
+				data.apiPath(),
+				data.errorMessage(),
+				data.responseBody(),
+				data.httpMethod(),
+				data.durationMs()
 		);
 
 		OutboundApiResponseHandlerPort responseHandler = responseHandlerFactory.getHandler(system);

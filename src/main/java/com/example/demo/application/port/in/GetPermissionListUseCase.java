@@ -1,7 +1,7 @@
 package com.example.demo.application.port.in;
 
 import com.example.demo.application.shared.dto.PermissionGottenResult;
-import com.example.demo.application.shared.outbound.auth.query.GetPermissionListQuery;
+import com.example.demo.application.shared.query.GetPermissionListQuery;
 
 /**
  * 取得使用者權限清單 UseCase

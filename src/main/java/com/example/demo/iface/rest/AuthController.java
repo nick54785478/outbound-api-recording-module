@@ -13,7 +13,7 @@ import com.example.demo.application.port.in.GetPermissionListUseCase;
 import com.example.demo.application.shared.dto.JwTokenGottenResult;
 import com.example.demo.application.shared.dto.PermissionGottenResult;
 import com.example.demo.application.shared.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.query.GetPermissionListQuery;
+import com.example.demo.application.shared.query.GetPermissionListQuery;
 import com.example.demo.iface.assembler.AuthResourceAssembler;
 import com.example.demo.iface.resource.in.GetJwTokenResource;
 import com.example.demo.iface.resource.out.JwTokenGottenResource;

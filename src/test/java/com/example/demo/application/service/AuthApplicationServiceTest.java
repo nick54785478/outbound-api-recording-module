@@ -19,7 +19,7 @@ import com.example.demo.application.shared.dto.PermissionGottenResult;
 import com.example.demo.application.shared.command.GetJwTokenCommand;
 import com.example.demo.application.shared.outbound.auth.command.GetJwTokenFromAuthCommand;
 import com.example.demo.application.shared.outbound.auth.query.GetPermissionListFromAuthQuery;
-import com.example.demo.application.shared.outbound.auth.query.GetPermissionListQuery;
+import com.example.demo.application.shared.query.GetPermissionListQuery;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthApplicationService UseCase 測試")
@@ -52,7 +52,7 @@ class AuthApplicationServiceTest {
 
 		// Then
 		assertThat(actual).isNotNull();
-		assertThat(actual.getToken()).isEqualTo("mock-token-xyz");
+		assertThat(actual.token()).isEqualTo("mock-token-xyz");
 		verify(authServiceClient).getJwToken(expectedOutboundCommand);
 	}
 
@@ -77,7 +77,7 @@ class AuthApplicationServiceTest {
 
 		// Then
 		assertThat(actual).isNotNull();
-		assertThat(actual.getPermissionList()).containsExactly("USER_READ", "USER_WRITE");
+		assertThat(actual.permissionList()).containsExactly("USER_READ", "USER_WRITE");
 		verify(authServiceClient).getPermissionList(expectedOutboundQuery);
 	}
 }
