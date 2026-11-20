@@ -5,6 +5,13 @@
 [![Spring Cloud OpenFeign](https://img.shields.io/badge/Spring%20Cloud-OpenFeign-blue.svg)](https://spring.io/projects/spring-cloud-openfeign)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2F%20Hexagonal%20%2B%20EDA-purple.svg)]()
 [![Documentation](https://img.shields.io/badge/API%20Docs-SpringDoc%20OpenAPI-informational.svg)](http://localhost:8080/swagger-ui.html)
+[![Feign Guide](https://img.shields.io/badge/Guide-Feign%20Client-blueviolet.svg)](docs/feign-client-guide.md)
+
+---
+
+## 📚 相關文件與指引
+
+- 📘 **[OpenFeign Client 技術指南](docs/feign-client-guide.md)**：包含 Feign 生命週期、攔截器 Context 注入、Apache HttpClient SSL 配置、雙層業務檢核機制、ACL 適配器實作與常見 FAQ。
 
 ---
 
