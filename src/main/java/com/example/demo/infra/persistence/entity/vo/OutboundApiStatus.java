@@ -4,7 +4,8 @@ package com.example.demo.infra.persistence.entity.vo;
  * Outbound API 呼叫狀態。
  *
  * <p>
- * 描述 OutboundApiRecord 在其生命週期中的狀態轉移， 狀態僅能由 Aggregate Root 內部行為進行改變。
+ * 描述 OutboundApiRecord 在其生命週期中的狀態轉移， 狀態僅能由內部行為進行改變。
+ * </p>
  */
 public enum OutboundApiStatus {
 

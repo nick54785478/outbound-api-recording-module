@@ -1,4 +1,4 @@
-package com.example.demo.infra.outbound.exception.adapter;
+package com.example.demo.infra.outbound.exception.mapper.impl;
 
 import org.springframework.stereotype.Component;
 

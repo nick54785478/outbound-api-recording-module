@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-import com.example.demo.application.port.OutboundApiResponseHandlerPort;
+import com.example.demo.application.port.out.OutboundApiResponseHandlerPort;
 
 /**
  * Outbound API Response Handler Factory

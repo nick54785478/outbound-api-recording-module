@@ -1,9 +1,9 @@
-package com.example.demo.application.port;
+package com.example.demo.application.port.out;
 
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 
 /**
- * 外部 API 回應檢核器 Port
+ * 外部 API 回應檢核器 Outbound Port
  *
  * <p>
  * 定義外部系統回應的檢核行為，成功則放行，失敗則拋出 Exception。
@@ -13,10 +13,6 @@ public interface OutboundApiResponseValidatorPort {
 
 	/**
 	 * 回傳此 Validator 所支援的外部系統代碼。
-	 *
-	 * <p>
-	 * Factory 依此在執行期選擇正確的 Validator。
-	 * </p>
 	 *
 	 * @return 外部系統代碼（唯一識別）
 	 */

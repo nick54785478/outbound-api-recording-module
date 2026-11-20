@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import com.example.demo.application.factory.OutboundApiRequestHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseHandlerFactory;
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
-import com.example.demo.application.port.OutboundApiRequestHandlerPort;
-import com.example.demo.application.port.OutboundApiResponseHandlerPort;
-import com.example.demo.application.port.OutboundApiResponseValidatorPort;
+import com.example.demo.application.port.out.OutboundApiRequestHandlerPort;
+import com.example.demo.application.port.out.OutboundApiResponseHandlerPort;
+import com.example.demo.application.port.out.OutboundApiResponseValidatorPort;
 
 /**
  * 負責實例化 Application Layer 的 Factory 類別。

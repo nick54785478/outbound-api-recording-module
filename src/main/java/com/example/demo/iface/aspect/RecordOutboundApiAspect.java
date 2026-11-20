@@ -1,22 +1,23 @@
 package com.example.demo.iface.aspect;
 
-import com.example.demo.application.shared.outbound.context.ContextHolder;
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-
 import com.example.demo.application.service.OutboundApiRecordApplicationService;
+import com.example.demo.application.shared.outbound.context.ContextHolder;
 import com.example.demo.infra.annotation.ExternalApiClient;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 外部 API 呼叫切面 (AOP Inbound Adapter)
+ */
 @Slf4j
 @Aspect
 @Component
@@ -27,7 +28,6 @@ public class RecordOutboundApiAspect {
 	public RecordOutboundApiAspect(OutboundApiRecordApplicationService applicationService) {
 		this.applicationService = applicationService;
 	}
-
 
 	@Pointcut("@within(com.example.demo.infra.annotation.ExternalApiClient)")
 	public void pointCut() {
@@ -42,8 +42,8 @@ public class RecordOutboundApiAspect {
 		String system = externalApiClient.system();
 
 		Object[] args = joinPoint.getArgs();
-		org.aspectj.lang.reflect.MethodSignature signature = (org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature();
-		java.lang.reflect.Method method = signature.getMethod();
+		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		Method method = signature.getMethod();
 		Object target = joinPoint.getTarget();
 		String methodName = method.getName();
 		log.info("[RecordOutboundApiAspect] system: {}, Method: {}, Args: {}", system, methodName, args);
@@ -51,17 +51,20 @@ public class RecordOutboundApiAspect {
 		// 外部 API 呼叫前處理
 		Long recordId = applicationService.preExecutingOutboundApi(system, target, method, args);
 
+		long startTime = System.currentTimeMillis();
 		try {
 			// 執行原方法
 			Object proceed = joinPoint.proceed();
+			long durationMs = System.currentTimeMillis() - startTime;
 
 			// 外部 API 呼叫後處理
-			applicationService.afterExecutingOutboundApi(system, proceed, recordId);
+			applicationService.afterExecutingOutboundApi(system, proceed, recordId, durationMs);
 			return proceed;
 
 		} catch (Exception e) {
+			long durationMs = System.currentTimeMillis() - startTime;
 			// 外部 API 呼叫例外處理
-			applicationService.handleException(system, recordId, e.getMessage());
+			applicationService.handleException(system, recordId, e.getMessage(), durationMs);
 			throw e; // 可以拋出去終止流程，也可不拋
 
 		} finally {

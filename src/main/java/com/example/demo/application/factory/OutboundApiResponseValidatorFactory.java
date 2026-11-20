@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-import com.example.demo.application.port.OutboundApiResponseValidatorPort;
+import com.example.demo.application.port.out.OutboundApiResponseValidatorPort;
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 
 /**

@@ -1,6 +1,11 @@
 package com.example.demo.application.shared.event;
 
-public class RecordOutboundApiSucceededEvent extends BaseEvent {
+/**
+ * 外部 API 呼叫成功事件
+ *
+ * <p>符合命名規範 3-3: N + Ved + Event</p>
+ */
+public class OutboundApiSucceededEvent extends BaseEvent {
 
 	/**
 	 * 系統名稱
@@ -10,13 +15,13 @@ public class RecordOutboundApiSucceededEvent extends BaseEvent {
 	/**
 	 * Event Data
 	 */
-	private RecordOutboundApiEventData data;
+	private OutboundApiSucceededEventData data;
 
-	public RecordOutboundApiSucceededEvent() {
+	public OutboundApiSucceededEvent() {
 		super();
 	}
 
-	public RecordOutboundApiSucceededEvent(String eventLogUuid, String targetId, String system, RecordOutboundApiEventData data) {
+	public OutboundApiSucceededEvent(String eventLogUuid, String targetId, String system, OutboundApiSucceededEventData data) {
 		super(eventLogUuid, targetId);
 		this.system = system;
 		this.data = data;
@@ -30,15 +35,15 @@ public class RecordOutboundApiSucceededEvent extends BaseEvent {
 		this.system = system;
 	}
 
-	public RecordOutboundApiEventData getData() {
+	public OutboundApiSucceededEventData getData() {
 		return data;
 	}
 
-	public void setData(RecordOutboundApiEventData data) {
+	public void setData(OutboundApiSucceededEventData data) {
 		this.data = data;
 	}
 
-	public static class RecordOutboundApiEventData {
+	public static class OutboundApiSucceededEventData {
 		/**
 		 * 對應的 Outbound API 呼叫紀錄 ID。
 		 */
@@ -59,14 +64,24 @@ public class RecordOutboundApiSucceededEvent extends BaseEvent {
 		 */
 		private String responseBody;
 
-		public RecordOutboundApiEventData() {
+		/**
+		 * API 呼叫耗時 (毫秒)
+		 */
+		private Long durationMs;
+
+		public OutboundApiSucceededEventData() {
 		}
 
-		public RecordOutboundApiEventData(Long savedId, String apiPath, String httpMethod, String responseBody) {
+		public OutboundApiSucceededEventData(Long savedId, String apiPath, String httpMethod, String responseBody) {
+			this(savedId, apiPath, httpMethod, responseBody, null);
+		}
+
+		public OutboundApiSucceededEventData(Long savedId, String apiPath, String httpMethod, String responseBody, Long durationMs) {
 			this.savedId = savedId;
 			this.apiPath = apiPath;
 			this.httpMethod = httpMethod;
 			this.responseBody = responseBody;
+			this.durationMs = durationMs;
 		}
 
 		public Long getSavedId() {
@@ -99,6 +114,14 @@ public class RecordOutboundApiSucceededEvent extends BaseEvent {
 
 		public void setResponseBody(String responseBody) {
 			this.responseBody = responseBody;
+		}
+
+		public Long getDurationMs() {
+			return durationMs;
+		}
+
+		public void setDurationMs(Long durationMs) {
+			this.durationMs = durationMs;
 		}
 	}
 }

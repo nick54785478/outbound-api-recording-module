@@ -2,7 +2,6 @@ package com.example.demo.iface.exception;
 
 import com.example.demo.application.shared.exception.ValidationException;
 import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
-import com.example.demo.infra.util.BaseDataTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

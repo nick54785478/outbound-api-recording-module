@@ -1,6 +1,11 @@
 package com.example.demo.application.shared.event;
 
-public class RecordOutboundApiFailedEvent extends BaseEvent {
+/**
+ * 外部 API 呼叫失敗事件
+ *
+ * <p>符合命名規範 3-3: N + Ved + Event</p>
+ */
+public class OutboundApiFailedEvent extends BaseEvent {
 
 	/**
 	 * 系統名稱
@@ -10,13 +15,13 @@ public class RecordOutboundApiFailedEvent extends BaseEvent {
 	/**
 	 * Event Data
 	 */
-	private RecordOutboundApiFailedEventData data;
+	private OutboundApiFailedEventData data;
 
-	public RecordOutboundApiFailedEvent() {
+	public OutboundApiFailedEvent() {
 		super();
 	}
 
-	public RecordOutboundApiFailedEvent(String eventLogUuid, String targetId, String system, RecordOutboundApiFailedEventData data) {
+	public OutboundApiFailedEvent(String eventLogUuid, String targetId, String system, OutboundApiFailedEventData data) {
 		super(eventLogUuid, targetId);
 		this.system = system;
 		this.data = data;
@@ -30,21 +35,17 @@ public class RecordOutboundApiFailedEvent extends BaseEvent {
 		this.system = system;
 	}
 
-	public RecordOutboundApiFailedEventData getData() {
+	public OutboundApiFailedEventData getData() {
 		return data;
 	}
 
-	public void setData(RecordOutboundApiFailedEventData data) {
+	public void setData(OutboundApiFailedEventData data) {
 		this.data = data;
 	}
 
-	public static class RecordOutboundApiFailedEventData {
+	public static class OutboundApiFailedEventData {
 		/**
 		 * 對應的 Outbound API 呼叫紀錄 ID。
-		 *
-		 * <p>
-		 * 用於關聯 Request 階段所建立的紀錄資料。
-		 * </p>
 		 */
 		private Long savedId;
 
@@ -68,15 +69,25 @@ public class RecordOutboundApiFailedEvent extends BaseEvent {
 		 */
 		private String httpMethod;
 
-		public RecordOutboundApiFailedEventData() {
+		/**
+		 * API 呼叫耗時 (毫秒)
+		 */
+		private Long durationMs;
+
+		public OutboundApiFailedEventData() {
 		}
 
-		public RecordOutboundApiFailedEventData(Long savedId, String apiPath, String errorMessage, String responseBody, String httpMethod) {
+		public OutboundApiFailedEventData(Long savedId, String apiPath, String errorMessage, String responseBody, String httpMethod) {
+			this(savedId, apiPath, errorMessage, responseBody, httpMethod, null);
+		}
+
+		public OutboundApiFailedEventData(Long savedId, String apiPath, String errorMessage, String responseBody, String httpMethod, Long durationMs) {
 			this.savedId = savedId;
 			this.apiPath = apiPath;
 			this.errorMessage = errorMessage;
 			this.responseBody = responseBody;
 			this.httpMethod = httpMethod;
+			this.durationMs = durationMs;
 		}
 
 		public Long getSavedId() {
@@ -117,6 +128,14 @@ public class RecordOutboundApiFailedEvent extends BaseEvent {
 
 		public void setHttpMethod(String httpMethod) {
 			this.httpMethod = httpMethod;
+		}
+
+		public Long getDurationMs() {
+			return durationMs;
+		}
+
+		public void setDurationMs(Long durationMs) {
+			this.durationMs = durationMs;
 		}
 	}
 }

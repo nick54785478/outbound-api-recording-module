@@ -2,13 +2,16 @@ package com.example.demo.infra.adapter;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.port.OutboundApiRecordLoggerPort;
+import com.example.demo.application.port.out.OutboundApiRecordLoggerPort;
 import com.example.demo.application.shared.command.RecordOutboundApiRequestCommand;
-import com.example.demo.infra.persistence.repository.OutboundApiRecordRepository;
 import com.example.demo.infra.persistence.entity.OutboundApiRecord;
+import com.example.demo.infra.persistence.repository.OutboundApiRecordRepository;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * OutboundApiRecord Logger Outbound Adapter
+ */
 @Component
 @AllArgsConstructor
 public class OutboundApiRecordLoggerAdapter implements OutboundApiRecordLoggerPort {
@@ -17,10 +20,9 @@ public class OutboundApiRecordLoggerAdapter implements OutboundApiRecordLoggerPo
 
 	@Override
 	public Long save(RecordOutboundApiRequestCommand command) {
-		OutboundApiRecord record = new OutboundApiRecord();
-		record.create(command);
-		record = repository.save(record);
-		return record.getId();
+		OutboundApiRecord apiRecord = OutboundApiRecord.create(command);
+		apiRecord = repository.save(apiRecord);
+		return apiRecord.getId();
 	}
 
 }

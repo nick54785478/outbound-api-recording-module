@@ -4,6 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.infra.persistence.entity.OutboundApiRecord;
 
+/**
+ * OutboundApiRecord JPA Repository
+ */
 public interface OutboundApiRecordRepository extends JpaRepository<OutboundApiRecord, Long> {
 
 }

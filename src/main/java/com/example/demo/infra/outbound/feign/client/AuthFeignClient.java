@@ -6,29 +6,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.application.shared.outbound.auth.command.GetJwTokenCommand;
-import com.example.demo.application.shared.outbound.auth.dto.JwTokenGottenData;
-import com.example.demo.application.shared.outbound.auth.dto.PermissionGottenData;
+import com.example.demo.application.shared.outbound.auth.command.GetJwTokenFromAuthCommand;
 import com.example.demo.config.AuthFeignConfiguration;
+import com.example.demo.infra.outbound.shared.dto.JwTokenGottenFromAuthData;
+import com.example.demo.infra.outbound.shared.dto.PermissionGottenFromAuthData;
 
 @FeignClient(value = "AuthFeignClient", url = "${auth.service.endpoint}", configuration = AuthFeignConfiguration.class)
 public interface AuthFeignClient {
 
 	/**
 	 * 登入功能
-	 * 
-	 * @param command GetJwTokenCommand(內含帳號密碼)
+	 *
+	 * @param command GetJwTokenFromAuthCommand (內含帳號密碼)
 	 * @return JwToken
 	 */
 	@PostMapping(value = "/api/v1/login")
-	public JwTokenGottenData getJwToken(@RequestBody GetJwTokenCommand command);
+	public JwTokenGottenFromAuthData getJwToken(@RequestBody GetJwTokenFromAuthCommand command);
 
 	/**
 	 * 取得個人權限
-	 * 
+	 *
 	 * @param username 使用者帳號
 	 */
 	@GetMapping(value = "/api/v1/auth/permissions")
-	public PermissionGottenData getPermissionList(@RequestParam String username);
+	public PermissionGottenFromAuthData getPermissionList(@RequestParam String username);
 
 }
