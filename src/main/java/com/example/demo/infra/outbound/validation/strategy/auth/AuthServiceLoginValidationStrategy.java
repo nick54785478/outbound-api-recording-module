@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.infra.outbound.shared.dto.JwTokenGottenFromAuthData;
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
-import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
+import com.example.demo.infra.outbound.shared.exception.OutboundClientException;
 import com.example.demo.infra.outbound.validation.strategy.base.ApiResponseValidationStrategy;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * </ul>
  *
  * <p>
- * 若驗證失敗，將直接拋出 {@link CustomFeignException}， 交由上層 AOP 或全域例外處理機制統一處理。
+ * 若驗證失敗，將直接拋出 {@link OutboundClientException}， 交由上層 AOP 或全域例外處理機制統一處理。
  * </p>
  *
  * <p>
@@ -76,12 +76,12 @@ public class AuthServiceLoginValidationStrategy implements ApiResponseValidation
 	 * </p>
 	 *
 	 * <p>
-	 * 若驗證失敗，將拋出 {@link CustomFeignException}， 代表該次外部 API 呼叫在業務層級失敗。
+	 * 若驗證失敗，將拋出 {@link OutboundClientException}， 代表該次外部 API 呼叫在業務層級失敗。
 	 * </p>
 	 *
 	 * @param response Feign 解碼後的 API 回傳物件
 	 * @param context  外部 API 呼叫上下文資訊
-	 * @throws CustomFeignException 當 token 取得失敗時拋出
+	 * @throws OutboundClientException 當 token 取得失敗時拋出
 	 */
 	@Override
 	public void validate(Object response, OutboundApiRequestInfo context) {
@@ -91,7 +91,7 @@ public class AuthServiceLoginValidationStrategy implements ApiResponseValidation
 		// JWT Token 或 Refresh Token 取得失敗
 		if (response instanceof JwTokenGottenFromAuthData tokenData
 				&& (tokenData.getToken() == null)) {
-			throw new CustomFeignException("FEIGN_FAILED", "AuthService token 取得失敗");
+			throw new OutboundClientException("FEIGN_FAILED", "AuthService token 取得失敗");
 		}
 	}
 }

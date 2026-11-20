@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import com.example.demo.application.factory.OutboundApiResponseValidatorFactory;
 import com.example.demo.application.shared.outbound.context.ContextHolder;
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
-import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
+import com.example.demo.infra.outbound.shared.exception.OutboundClientException;
 
 import feign.Response;
 import feign.Util;
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * <b>架構定位與職責：</b><br>
  * 本類別位於 <b>Infrastructure Layer (基礎設施層)</b>，實作 OpenFeign 的 {@link ErrorDecoder} 介面。<br>
  * 作為外部 API 通訊的防禦邊界（Anti-Corruption），專責攔截並解析外部服務回傳的非預期 HTTP 狀態碼或錯誤內容，
- * 將技術底層的 HTTP/Feign 例外轉換為領域或應用層可辨識的 {@link CustomFeignException}。
+ * 將技術底層的 HTTP/Feign 例外轉換為領域或應用層可辨識的 {@link OutboundClientException}。
  * </p>
  *
  * <p>
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * <ol>
  *   <li>自 {@link ContextHolder} 取得當前請求的上下文資訊（如系統別、URL、方法）。</li>
  *   <li>解析 HTTP Response Body 內容以供日誌紀錄或錯誤診斷。</li>
- *   <li>當 HTTP 狀態碼非 2xx（如 4xx 客戶端錯誤、5xx 伺服器錯誤）時，直接封裝並拋出 {@link CustomFeignException}。</li>
+ *   <li>當 HTTP 狀態碼非 2xx（如 4xx 客戶端錯誤、5xx 伺服器錯誤）時，直接封裝並拋出 {@link OutboundClientException}。</li>
  *   <li>透過 {@link OutboundApiResponseValidatorFactory} 取得該系統的專屬驗證策略，執行深入的業務邏輯檢核。</li>
  * </ol>
  * </p>
@@ -76,9 +76,9 @@ public class FeignErrorDecoder implements ErrorDecoder {
             log.warn("Feign response body 讀取失敗: methodKey={}, status={}", methodKey, response.status(), e);
         }
 
-        // 1. 若 HTTP 狀態碼非 2xx (例如 4xx, 5xx)，封裝為專案自定義的 CustomFeignException 向上拋出
+        // 1. 若 HTTP 狀態碼非 2xx (例如 4xx, 5xx)，封裝為專案自定義的 OutboundClientException 向上拋出
         if (response.status() < 200 || response.status() >= 300) {
-            return new CustomFeignException(
+            return new OutboundClientException(
                 "HTTP_" + response.status(),
                 "HTTP Error: " + response.status() + ", body=" + body
             );

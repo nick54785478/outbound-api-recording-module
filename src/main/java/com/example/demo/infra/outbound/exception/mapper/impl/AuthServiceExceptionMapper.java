@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.exception.factory.ExternalExceptionMapperFactory;
 import com.example.demo.infra.outbound.exception.mapper.ExternalExceptionMapper;
-import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
+import com.example.demo.infra.outbound.shared.exception.OutboundClientException;
 
 /**
  * Auth Service 專用的外部例外轉換器。
@@ -47,10 +47,10 @@ class AuthServiceExceptionMapper implements ExternalExceptionMapper {
 	 * @param httpStatus   HTTP 狀態碼（此系統實際上可能永遠是 200）
 	 * @param responseBody 外部系統原始回應內容（JSON 字串）
 	 * @param context      對外 API 呼叫的上下文資訊
-	 * @return 封裝後的 {@link CustomFeignException}
+	 * @return 封裝後的 {@link OutboundClientException}
 	 */
 	@Override
 	public RuntimeException map(int httpStatus, String responseBody, OutboundApiRequestInfo context) {
-		return new CustomFeignException("FEIGN_FAILED", "呼叫 Auth Service 外部 API 失敗");
+		return new OutboundClientException("FEIGN_FAILED", "呼叫 Auth Service 外部 API 失敗");
 	}
 }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.application.shared.outbound.context.OutboundApiRequestInfo;
 import com.example.demo.infra.outbound.exception.mapper.ExternalExceptionMapper;
-import com.example.demo.infra.outbound.shared.exception.CustomFeignException;
+import com.example.demo.infra.outbound.shared.exception.OutboundClientException;
 
 /**
  * 預設的外部系統 Exception Mapper（Fallback）。
@@ -35,7 +35,7 @@ class DefaultExternalExceptionMapper implements ExternalExceptionMapper {
 	}
 
 	/**
-	 * 將未知或未特別處理的外部系統錯誤， 轉換為通用的 {@link CustomFeignException}。
+	 * 將未知或未特別處理的外部系統錯誤， 轉換為通用的 {@link OutboundClientException}。
 	 *
 	 * @param httpStatus   HTTP 狀態碼
 	 * @param responseBody 外部系統原始回應內容
@@ -44,6 +44,6 @@ class DefaultExternalExceptionMapper implements ExternalExceptionMapper {
 	 */
 	@Override
 	public RuntimeException map(int httpStatus, String responseBody, OutboundApiRequestInfo context) {
-		return new CustomFeignException("FEIGN_FAILED", "外部系統 " + context.system() + " 呼叫失敗");
+		return new OutboundClientException("FEIGN_FAILED", "外部系統 " + context.system() + " 呼叫失敗");
 	}
 }

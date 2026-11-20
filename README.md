@@ -185,15 +185,29 @@ flowchart TD
 ### 3. 上下文管理器 (`ContextHolder`)
 * 基於 `ThreadLocal` 實現，在 Feign 調用鏈中安全儲存該次請求的 URI、HTTP Method 與 Header，確保在多執行緒與非同步分派中維持資料隔離，並於 `finally` 區塊強制 `clear()` 避免記憶體洩漏。
 
-### 4. 錯誤處理與解碼 (Error Handling)
-* **`FeignErrorDecoder`**：攔截非 2xx HTTP 回應。
-* **`ExternalExceptionMapper`**：依系統自定義將底層 FeignException 轉換為專案自定義業務例外（如 `CustomFeignException`），避免底層技術細節外洩。
+### 4. 自定義 API 回應驗證策略 (`infra/outbound/validation/`)
+* **`ApiResponseValidationStrategy`**：定義單一 API 級別的回應檢核規格。每支策略實作只需宣告：
+  * `system()`：所屬外部系統（如 `"AuthService"`, `"PAYMENT_SERVICE"`）
+  * `api()`：所對應的 API 路徑（如 `"/api/v1/login"`）
+  * `validate(Object response, OutboundApiRequestInfo context)`：具體業務檢核規則
+* **`ApiResponseValidationStrategyFactory`**：策略工廠，啟動時以 `system:api` 為 Key 自動註冊快取，執行期以 $O(1)$ 速度精準路由，避免繁複的 `if-else`。
+* **主要用途**：突破僅以 HTTP 200 判定成功的限制，深入檢核 Payload（如業務錯誤碼、Token 存在性、簽章校驗）。
+
+### 5. 自定義系統例外轉換器 (`infra/outbound/exception/`)
+* **`ExternalExceptionMapper`**：定義系統級別的錯誤轉譯規格。每個實作宣告：
+  * `supports(String system)`：判斷是否支援該外部系統代碼
+  * `map(int httpStatus, String responseBody, OutboundApiRequestInfo context)`：將外部原始錯誤 Payload 轉譯為系統內部統一的 `OutboundClientException`（繼承自應用層 `ExternalServiceException`）
+* **`ExternalExceptionMapperFactory`**：工廠模式，依系統名稱動態指派專屬 Mapper；若未配置專屬 Mapper 則自動退回 `DefaultExternalExceptionMapper`（Fallback 機制）。
+* **主要用途**：徹底落實防腐層（ACL），隔離各外部廠商特殊的錯誤代碼與訊息結構，避免外部廠商技術規格外洩。
+
+### 6. 錯誤解碼器 (`FeignErrorDecoder`)
+* 實作 OpenFeign 的 `ErrorDecoder` 介面，攔截非 2xx HTTP 狀態碼與通訊異常，並委派對應的驗證策略與例外轉換器處理。
 
 ---
 
 ## 🚀 擴充指引：如何新增一個外部系統？
 
-當專案需要對接新的外部第三方系統（例如 `PAYMENT_SERVICE`）時，只需遵循以下四個步驟：
+當專案需要對接新的外部第三方系統（例如 `PAYMENT_SERVICE`）時，只需遵循以下五個擴充步驟：
 
 ### 步驟 1：定義 Client 並標註 `@ExternalApiClient`
 ```java
@@ -210,11 +224,16 @@ public class PaymentServiceClientAdapter implements PaymentServiceClientPort {
 }
 ```
 
-### 步驟 2：實作 Request Handler
+### 步驟 2：實作 Request Handler (解析請求參數)
 實作 `OutboundApiRequestHandlerPort`，解析該系統特有的請求格式與參數：
 ```java
-@Component("PAYMENT_SERVICE_REQUEST_HANDLER")
+@Component
 public class PaymentServiceRequestHandlerAdapter implements OutboundApiRequestHandlerPort {
+    @Override
+    public String supportSystem() {
+        return "PAYMENT_SERVICE";
+    }
+
     @Override
     public RecordOutboundApiRequestCommand resolveRequest(Object target, Method method, Object[] args) {
         // 提取 Path、Query、Body 並回傳標準 Command
@@ -222,32 +241,67 @@ public class PaymentServiceRequestHandlerAdapter implements OutboundApiRequestHa
 }
 ```
 
-### 步驟 3：實作驗證策略 (Validation Strategy)
-為該系統的各項 API 定義驗證邏輯：
+### 步驟 3：自定義 API 回應驗證策略 (`ApiResponseValidationStrategy`)
+為該系統特定 API 端點定義細緻的業務檢核邏輯（放置於 `infra/outbound/validation/strategy/`）：
 ```java
 @Component
 public class PaymentPayValidationStrategy implements ApiResponseValidationStrategy {
     @Override
-    public boolean supports(OutboundApiRequestInfo context) {
-        return context.getUrl().contains("/api/v1/payments");
+    public String system() {
+        return "PAYMENT_SERVICE";
+    }
+
+    @Override
+    public String api() {
+        return "/api/v1/payments";
     }
 
     @Override
     public void validate(Object response, OutboundApiRequestInfo context) {
-        PaymentResponse res = (PaymentResponse) response;
-        if (!"SUCCESS".equalsIgnoreCase(res.getStatus())) {
-            throw new ValidationException("扣款失敗: " + res.getErrorMessage());
+        if (response instanceof PaymentResponse res && !"SUCCESS".equalsIgnoreCase(res.getStatus())) {
+            throw new OutboundClientException("PAYMENT_FAILED", "扣款業務檢核失敗: " + res.getErrorMessage());
         }
     }
 }
 ```
 
-### 步驟 4：實作 Response Handler (處理結果副作用)
-實作 `OutboundApiResponseHandlerPort`，提供該系統在收到事件後的處理邏輯（如狀態更新）：
+### 步驟 4：自定義系統例外轉換器 (`ExternalExceptionMapper`)
+為該系統定義專屬的例外轉譯邏輯，處理非 2xx 或異常回應（放置於 `infra/outbound/exception/mapper/impl/`）：
 ```java
-@Component("PAYMENT_SERVICE_RESPONSE_HANDLER")
-public class PaymentServiceResponseHandlerAdapter implements OutboundApiApiResponseHandlerPort {
-    // 實作 handleSuccess 與 handleFailure
+@Component
+public class PaymentExceptionMapper implements ExternalExceptionMapper {
+    @Override
+    public boolean supports(String system) {
+        return "PAYMENT_SERVICE".equals(system);
+    }
+
+    @Override
+    public RuntimeException map(int httpStatus, String responseBody, OutboundApiRequestInfo context) {
+        // 將外部金流系統特殊的 JSON 錯誤格式解析為統一的 OutboundClientException
+        return new OutboundClientException("PAYMENT_HTTP_" + httpStatus, "金流服務呼叫失敗: " + responseBody);
+    }
+}
+```
+
+### 步驟 5：實作 Response Handler (處理結果副作用)
+實作 `OutboundApiResponseHandlerPort`，提供該系統在收到成功/失敗領域事件後的後續處理（如更新記錄狀態）：
+```java
+@Component
+public class PaymentServiceResponseHandlerAdapter implements OutboundApiResponseHandlerPort {
+    @Override
+    public String supportSystem() {
+        return "PAYMENT_SERVICE";
+    }
+
+    @Override
+    public void handleSuccess(RecordSuccessOutboundApiCommand command) {
+        // 更新 DB 紀錄狀態為 SUCCESS
+    }
+
+    @Override
+    public void handleFailure(RecordFailedOutboundApiCommand command) {
+        // 更新 DB 紀錄狀態為 FAILED
+    }
 }
 ```
 
